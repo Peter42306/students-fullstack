@@ -1,0 +1,20 @@
+# Build
+**/bin/
+**/obj/
+*.user
+*.log
+
+# IDE
+**/.vs/
+**/.vscode/
+
+# Node modules
+**/node_modules/
+
+# Ignore uploads
+uploads/
+**/uploads/
+
+# Ignore local env files
+.env
+**/.env
