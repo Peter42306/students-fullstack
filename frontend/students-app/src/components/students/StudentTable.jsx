@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function StudentTable({students, onDelete}) {
     return(
         <div className="table-responsive">
@@ -23,12 +25,20 @@ export default function StudentTable({students, onDelete}) {
                             <td className="text-nowrap">{s.yearOfStudy}</td>
                             <td className="text-nowrap text-truncate" style={{maxWidth:"200px"}}>{s.notes}</td>
                             <td>
-                                <button
-                                    className="btn btn-outline-danger"
-                                    onClick={() => onDelete(s.id)}
-                                >
-                                    Delete
-                                </button>
+                                <div className="d-flex justify-content-end gap-2">
+                                    <Link
+                                        to={`/students/${s.id}`}
+                                        className="btn btn-outline-secondary btn-fixed"
+                                    >
+                                        Details                                    
+                                    </Link>                                    
+                                    <button
+                                        className="btn btn-outline-danger btn-fixed"
+                                        onClick={() => onDelete(s.id)}
+                                    >
+                                        Delete
+                                    </button>                                    
+                                </div>                                
                             </td>
                         </tr>
                     ))}                    

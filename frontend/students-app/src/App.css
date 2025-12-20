@@ -2,6 +2,10 @@ body{
   font-family: 'Comfortaa', sans-serif;
 }
 
+.btn-fixed {
+  min-width: 120px;
+}
+
 /* #root {
   max-width: 1280px;
   margin: 0 auto;

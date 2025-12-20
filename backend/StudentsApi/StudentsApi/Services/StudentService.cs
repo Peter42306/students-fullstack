@@ -15,6 +15,7 @@ namespace StudentsApi.Services
         }
 
 
+
         public async Task<List<StudentReadDto>> GetAllAsync(
             string? search, 
             CancellationToken ct = default)
@@ -47,6 +48,7 @@ namespace StudentsApi.Services
             }).ToList();
         }
 
+
         public async Task<StudentReadDto?> GetByIdAsync(
             int id, 
             CancellationToken ct = default)
@@ -74,6 +76,7 @@ namespace StudentsApi.Services
                 Age = student.CalculateAge()
             };
         }
+
 
         public async Task<(
             bool ok,
@@ -118,6 +121,43 @@ namespace StudentsApi.Services
             });
         }
 
+
+        public async Task<(bool ok, string? error)> UpdateAsync(
+            int id, 
+            StudentUpdateDto dto, 
+            CancellationToken ct = default)
+        {
+            var student = await _db.Students.FirstOrDefaultAsync(x => x.Id == id, ct);
+
+            if (student is null)
+            {
+                return (false, "Student not found.");
+            }
+
+            var email = dto.Email.Trim().ToLowerInvariant();
+
+            var emailExists = await _db.Students.AnyAsync(x => x.Email == email && x.Id != id, ct);
+
+            if (emailExists)
+            {
+                return (false, "Email already exists.");
+            }
+
+            student.FirstName = dto.FirstName.Trim();
+            student.LastName = dto.LastName.Trim();
+            student.Email = email;
+            student.DateOfBirth = dto.DateOfBirth;
+            student.EnrollmentDate = dto.EnrollmentDate;
+            student.Notes = string.IsNullOrWhiteSpace(dto.Notes)
+                ? null 
+                : dto.Notes.Trim();
+
+            await _db.SaveChangesAsync();
+
+            return (true, null);
+        }
+
+
         public async Task<bool> DeleteAsync(
             int id, 
             CancellationToken ct = default)
@@ -132,6 +172,7 @@ namespace StudentsApi.Services
             _db.Students.Remove(student);
             await _db.SaveChangesAsync(ct);
             return true;
-        }        
+        }
+        
     }
 }

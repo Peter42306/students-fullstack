@@ -62,6 +62,33 @@ namespace StudentsApi.Controllers
                 created);
         }
 
+        // PUT: /api/Students/{id}
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> Update(
+            int id,
+            [FromBody] StudentUpdateDto dto,
+            CancellationToken ct)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
+
+            var existing = await _studentService.GetByIdAsync(id, ct);
+            if (existing is null)
+            {
+                return NotFound();
+            }
+
+            var (ok, error) = await _studentService.UpdateAsync(id, dto, ct);
+            if (!ok)
+            {
+                return BadRequest(new { message = error ?? "Update failed." });
+            }
+
+            return NoContent();
+        }
+
         // DELETE: /api/students/5
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(

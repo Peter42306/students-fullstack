@@ -47,15 +47,21 @@ export default function StudentsAll() {
 
     return(
         <div className="container py-3">
-            <h1>Students</h1>            
-            <hr/>
 
-            <div className="text-end mb-2">
-                <Link to="/students/create" className="btn btn-outline-primary">
+            <div className="d-flex justify-content-between align-content-center">
+                <h1 className="mb-0">Students</h1>            
+                <div className="text-end">
+                <Link 
+                    to="/students/create" 
+                    className="btn btn-outline-primary btn-fixed"                    
+                >
                     Add
                 </Link>
             </div>
+
+            </div>
             
+            <hr/>           
 
             <div className="d-flex flex-column gap-2">
                 <StudentSearchBar search={search} onSearchChange={setSearch} onSearch={load}/>
@@ -64,6 +70,7 @@ export default function StudentsAll() {
                 {!loading && !error && students.length === 0 &&<StudentsEmptyTable/>}
                 {!loading && !error && students.length > 0 &&<StudentTable students={students} onDelete={onDelete}/>}
             </div>
+
         </div>
     );
 }

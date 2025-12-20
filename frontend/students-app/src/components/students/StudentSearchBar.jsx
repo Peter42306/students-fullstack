@@ -12,7 +12,10 @@ export default function StudentSearchBar({search, onSearchChange, onSearch}) {
                     }
                 }}
             />
-            <button className="btn btn-outline-primary" onClick={onSearch}>
+            <button 
+                className="btn btn-outline-primary btn-fixed" 
+                onClick={onSearch}                
+            >
                 Seach
             </button>
         </div>

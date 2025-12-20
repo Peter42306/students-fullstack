@@ -2,7 +2,7 @@
 
 namespace StudentsApi.Dtos
 {
-    public class StudentCreateDto
+    public class StudentUpdateDto
     {
         [Required, MaxLength(100)]
         public string FirstName { get; set; } = null!;
