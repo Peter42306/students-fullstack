@@ -42,7 +42,8 @@ namespace StudentsApi.Services
                 CreatedAt = x.CreatedAt,
                 EnrollmentDate = x.EnrollmentDate,
                 Notes = x.Notes,
-                YearOfStudy = x.CalculateYearOfStudy()
+                YearOfStudy = x.CalculateYearOfStudy(),
+                Age = x.CalculateAge()
             }).ToList();
         }
 
@@ -69,7 +70,8 @@ namespace StudentsApi.Services
                 CreatedAt = student.CreatedAt,
                 EnrollmentDate = student.EnrollmentDate,
                 Notes = student.Notes,
-                YearOfStudy = student.CalculateYearOfStudy()
+                YearOfStudy = student.CalculateYearOfStudy(), 
+                Age = student.CalculateAge()
             };
         }
 
@@ -111,7 +113,8 @@ namespace StudentsApi.Services
                 CreatedAt = student.CreatedAt,
                 EnrollmentDate = student.EnrollmentDate,
                 Notes = student.Notes,
-                YearOfStudy = student.CalculateYearOfStudy()
+                YearOfStudy = student.CalculateYearOfStudy(),
+                Age = student.CalculateAge()
             });
         }
 

@@ -17,7 +17,35 @@ namespace StudentsApi.Domain.Entities
 
         public int CalculateYearOfStudy()
         {
-            return DateTime.UtcNow.Year - EnrollmentDate.Year + 1;
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+            int GetAcademicYear(DateOnly date)
+            {
+                var academicYearStart = new DateOnly(date.Year, 9, 1);
+                return date < academicYearStart 
+                    ? date.Year - 1 
+                    : date.Year;
+            }
+
+            var enrollmentAcademicYear = GetAcademicYear(EnrollmentDate);
+            var currentAcademicYear = GetAcademicYear(today);
+
+            var yearOfStudy = currentAcademicYear - enrollmentAcademicYear + 1;
+
+            return Math.Max(1, yearOfStudy);
         }        
+
+        public int CalculateAge()
+        {
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            
+            var age = today.Year - DateOfBirth.Year;
+            if (today <DateOfBirth.AddYears(age))
+            {
+                age--;
+            }
+
+            return age;
+        }
     }
 }

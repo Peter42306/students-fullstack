@@ -16,5 +16,6 @@ namespace StudentsApi.Dtos
         public string? Notes { get; set; }
         
         public int YearOfStudy { get; set; }
+        public int Age { get; set; }
     }
 }
