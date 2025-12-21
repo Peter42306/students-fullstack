@@ -93,6 +93,29 @@ namespace StudentsApi.Services
                 return (false, "Email already exists.", null);
             }
 
+            
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            
+            if (dto.DateOfBirth > today)
+            {
+                return (false, "Date of birth can't be in the future.", null);
+            }
+            if (dto.DateOfBirth < today.AddYears(-100))
+            {
+                return (false, "Date of birth looks too old (100+ years)", null);
+            }
+
+            if (dto.EnrollmentDate > today)
+            {
+                return (false, "Enrollment date can't be in the future.", null);
+            }
+            if (dto.EnrollmentDate < today.AddYears(-100))
+            {
+                return (false, "Enrollment date looks too old (100+ years)", null);
+            }
+
+
+
             var student = new Student
             {
                 FirstName = dto.FirstName.Trim(),
@@ -142,6 +165,27 @@ namespace StudentsApi.Services
             {
                 return (false, "Email already exists.");
             }
+
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+            if (dto.DateOfBirth > today)
+            {
+                return (false, "Date of birth can't be in the future.");
+            }
+            if (dto.DateOfBirth < today.AddYears(-100))
+            {
+                return (false, "Date of birth looks too old (100+ years)");
+            }
+
+            if (dto.EnrollmentDate > today)
+            {
+                return (false, "Enrollment date can't be in the future.");
+            }
+            if (dto.EnrollmentDate < today.AddYears(-100))
+            {
+                return (false, "Enrollment date looks too old (100+ years)");
+            }
+
 
             student.FirstName = dto.FirstName.Trim();
             student.LastName = dto.LastName.Trim();

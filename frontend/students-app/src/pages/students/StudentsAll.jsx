@@ -31,6 +31,7 @@ export default function StudentsAll() {
     useEffect(() => {
         load();
     },[])
+    
 
     async function onDelete(id) {
         if(!confirm('Delete student?')){

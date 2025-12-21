@@ -2,12 +2,22 @@ const API_BASE = '/api/students';
 
 async function handleResponse(res) {
     if(!res.ok){
-        const text = await res.text().catch(() => '');
-        throw new Error(`API error ${res.status}: ${text || res.statusText}`);
+        let message = res.statusText;
+
+        try {
+            const data = await res.json();
+            message = data.message ?? message;
+        } catch {
+            // if not JSON remained message = res.statusText
+        }
+
+        throw new Error(message);
     }
-    if(res.status ===204){
+
+    if(res.status === 204){
         return;
     }
+
     return res.json();
 }
 

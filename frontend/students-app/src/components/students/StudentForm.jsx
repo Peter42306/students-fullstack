@@ -1,3 +1,5 @@
+import TextareaAutosize from 'react-textarea-autosize';
+
 export default function StudentForm({    
     value,
     onChange,
@@ -9,7 +11,12 @@ export default function StudentForm({
 }) {
     function handleChange(e) {
         const {name, value: newValue} = e.target;
-        onChange({...value, [name]: newValue});
+        onChange({
+            ...value, 
+            [name]: name === 'email'
+            ? newValue.toLowerCase() 
+            : newValue,
+        });
     }
 
     return(        
@@ -75,16 +82,26 @@ export default function StudentForm({
                             required
                         />
                     </div>
-                    <div className="col-12">
+                    <div className='col-12'>
                         <label>Notes</label>
-                        <textarea
-                            className="form-control"
-                            name="notes"
-                            rows={4}
-                            value={value.notes}
+                        <TextareaAutosize
+                            className='form-control'
+                            name='notes'                            
+                            value={value.notes ?? ''}
                             onChange={handleChange}
-                            maxLength={4000}                            
+                            minRows={4}
+                            style={{resize:'none', overflow:'hidden'}}
                         />
+                        <div className='text-end'>
+                            <small className={
+                                (value.notes?.length ?? 0) > 3900
+                                ? 'text-warning'
+                                : 'text-muted'
+                                }
+                            >
+                                {value.notes?.length ?? 0} / 4000
+                            </small>
+                        </div>                        
                     </div>
 
                     <div className="d-flex justify-content-end gap-2">
