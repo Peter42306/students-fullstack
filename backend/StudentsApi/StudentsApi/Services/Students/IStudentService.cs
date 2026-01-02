@@ -1,11 +1,15 @@
 ﻿using StudentsApi.Dtos;
 
-namespace StudentsApi.Services
+namespace StudentsApi.Services.Students
 {
     public interface IStudentService
     {
-        Task<List<StudentReadDto>> GetAllAsync(
+        Task<PagedResultDto<StudentReadDto>> GetAllAsync(
             string? search, 
+            int page,
+            int pageSize,
+            string? sortBy,
+            string? sortDirection,
             CancellationToken ct = default);
 
         Task<StudentReadDto?> GetByIdAsync(

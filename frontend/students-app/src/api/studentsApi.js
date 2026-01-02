@@ -21,12 +21,20 @@ async function handleResponse(res) {
     return res.json();
 }
 
-// /api/Students
-export async function getStudents(search) {
-    const url = search 
-        ? `${API_BASE}?search=${encodeURIComponent(search)}` 
-        : API_BASE;
-    const res = await fetch(url);
+// GET /api/students
+export async function getStudents(search, page, pageSize, sortBy, sortDirection) {
+    const params = new URLSearchParams();
+
+    if(search?.trim()){
+        params.set('search', search.trim());
+    }
+
+    params.set('page', String(page));
+    params.set('pageSize', String(pageSize));
+    params.set('sortBy', sortBy);
+    params.set('sortDirection', sortDirection);
+
+    const res = await fetch(`${API_BASE}?${params.toString()}`);
     return handleResponse(res);
 }
 
@@ -64,3 +72,44 @@ export async function updateStudent(id, dto) {
   });
   return handleResponse(res);
 }
+
+// POST /api/students/{id}/enclosures
+export async function uploadEnclosures(studentId, files) {
+    const form = new FormData();
+
+    for(const file of files){
+        form.append("Files", file);
+    }
+
+    const res = await fetch(`${API_BASE}/${studentId}/enclosures`,{
+        method: "POST",
+        body: form,
+    });
+
+    return handleResponse(res);
+}
+
+// GET /api/students/{id}/enclosures
+export async function getEnclosures(studentId) {
+    const res = await fetch(`${API_BASE}/${studentId}/enclosures`);
+    return handleResponse(res);
+}
+
+// DELETE /api/students/{id}/enclosures/{enclosureId}
+export async function deleteEnclosure(studentId, enclosureId) {
+    const res = await fetch(`${API_BASE}/${studentId}/enclosures/${enclosureId}`,{
+        method:"DELETE",
+    });
+
+    if(res.status === 204){
+        return;
+    }
+
+    return handleResponse(res);
+}
+
+// GET /api/students/{id}/enclosures/{enclosureId}
+export function enclosureDownloadUrl(studentId, enclosureId) {
+    return `${API_BASE}/${studentId}/enclosures/${enclosureId}`;
+}
+

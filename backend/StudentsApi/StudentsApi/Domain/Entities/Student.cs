@@ -15,6 +15,10 @@ namespace StudentsApi.Domain.Entities
         public DateOnly EnrollmentDate { get; set; }        
         public string? Notes { get; set; }
 
+        public PhotoAvatar? Avatar { get; set; }
+        public List<PhotoEnclosure> Enclosures { get; set; } = new();
+        
+
         public int CalculateYearOfStudy()
         {
             var today = DateOnly.FromDateTime(DateTime.UtcNow);

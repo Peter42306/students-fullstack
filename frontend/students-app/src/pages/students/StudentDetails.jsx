@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getStudent } from "../../api/studentsApi";
+import { enclosureDownloadUrl, getEnclosures, getStudent } from "../../api/studentsApi";
 
 export default function StudentDetails() {
 
@@ -8,20 +8,40 @@ export default function StudentDetails() {
     const [student, setStudent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [enclosures, setEnclosures] = useState([]);
+    
 
     useEffect(() => {
+        let cancelled = false;
+
         (async () => {
             setLoading(true);
             setError('');
 
             try {
-                setStudent(await getStudent(id));
+                const [stu, enc] = await Promise.all([
+                    getStudent(id),
+                    getEnclosures(id),
+                ]);
+
+                if(cancelled){
+                    return;
+                }
+
+                setStudent(stu);
+                setEnclosures(enc ?? []);
             } catch (err) {
                 setError(err?.message ?? 'Load failed');
             } finally {
-                setLoading(false);
+                if (!cancelled){
+                    setLoading(false);
+                } 
             }
         })();
+
+        return () =>{
+            cancelled = true;
+        }
     }, [id]);
 
     if(loading){
@@ -71,13 +91,34 @@ export default function StudentDetails() {
             <h3>{student.firstName} {student.lastName}</h3>
 
             <div className="d-flex flex-column gap-2">
-                <div>Email: {student.email}</div>
-                <div>Birth date: {student.dateOfBirth}</div>
                 <div>Age: {student.age}</div>
-                <div>Enrollment date: {student.enrollmentDate}</div>
                 <div>Study year: {student.yearOfStudy}</div>
+                <div>Email: {student.email}</div>
+                <div>Birth date: {student.dateOfBirth}</div>                
+                <div>Enrollment date: {student.enrollmentDate}</div>                
                 <div>Notes: {student.notes}</div>
             </div>
+            
+                        
+            {enclosures.length > 0 && (
+                <div>
+                    <hr/>
+                    {enclosures.map(e => (
+                        <div key={e.id} className="mb-4">
+                            
+
+                                <img
+                                    src={enclosureDownloadUrl(id, e.id)}
+                                    alt={e.fileName}
+                                    className="img-fluid rounded border shadow"
+                                />
+                            
+                        </div>
+                    ))}
+
+                </div>
+            )}
+            
             
 
             

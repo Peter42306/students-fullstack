@@ -83,7 +83,7 @@ export default function StudentForm({
                         />
                     </div>
                     <div className='col-12'>
-                        <label>Notes</label>
+                        <label>Notes (optional)</label>
                         <TextareaAutosize
                             className='form-control'
                             name='notes'                            
@@ -102,7 +102,7 @@ export default function StudentForm({
                                 {value.notes?.length ?? 0} / 4000
                             </small>
                         </div>                        
-                    </div>
+                    </div>                    
 
                     <div className="d-flex justify-content-end gap-2">
                         <button

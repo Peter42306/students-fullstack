@@ -3,7 +3,7 @@ using StudentsApi.Data;
 using StudentsApi.Domain.Entities;
 using StudentsApi.Dtos;
 
-namespace StudentsApi.Services
+namespace StudentsApi.Services.Students
 {
     public class StudentService : IStudentService
     {
@@ -14,13 +14,28 @@ namespace StudentsApi.Services
             _db = db;
         }
 
+        public const int DefaultPageSize = 10;
+        public const int MaxPageSize = 200;
+        
 
-
-        public async Task<List<StudentReadDto>> GetAllAsync(
+        public async Task<PagedResultDto<StudentReadDto>> GetAllAsync(
             string? search, 
+            int page,
+            int pageSize,
+            string? sortBy,
+            string? sortDirection,
             CancellationToken ct = default)
         {
-            var q = _db.Students.AsNoTracking();
+            
+            // pagination
+            page = page < 1 ? 1 : page;
+            pageSize = pageSize < 1 ? DefaultPageSize : pageSize;
+            pageSize = pageSize > MaxPageSize ? MaxPageSize : pageSize;
+
+
+            var q = _db.Students.AsNoTracking();            
+
+
 
             if (!string.IsNullOrWhiteSpace(search))
             {
@@ -31,21 +46,90 @@ namespace StudentsApi.Services
                     x.Email.ToLower().Contains(s));
             }
 
-            var students = await q.ToListAsync(ct);
 
-            return students.Select(x => new StudentReadDto
+            // sorting
+            var by = (sortBy ?? "id").Trim().ToLowerInvariant();
+            var desc = string.Equals(sortDirection, "desc", StringComparison.OrdinalIgnoreCase);
+
+            if (by == "id")
             {
-                Id = x.Id,
-                FirstName = x.FirstName,
-                LastName = x.LastName,
-                Email = x.Email,
-                DateOfBirth = x.DateOfBirth,
-                CreatedAt = x.CreatedAt,
-                EnrollmentDate = x.EnrollmentDate,
-                Notes = x.Notes,
-                YearOfStudy = x.CalculateYearOfStudy(),
-                Age = x.CalculateAge()
-            }).ToList();
+                q = desc
+                    ? q.OrderByDescending(x => x.Id)
+                    : q.OrderBy(x => x.Id);
+            }
+            else if (by == "name")
+            {
+                q = desc
+                    ? q.OrderByDescending(x => x.LastName).ThenByDescending(x => x.FirstName)
+                    : q.OrderBy(x => x.LastName).ThenBy(x => x.FirstName);
+            }
+            else if (by == "email")
+            {
+                q = desc 
+                    ? q.OrderByDescending(x => x.Email)
+                    : q.OrderBy(x => x.Email);
+            }
+            else if (by == "age")
+            {
+                // Age is derived from DateOfBirth
+                q = desc 
+                    ? q.OrderBy(x => x.DateOfBirth)
+                    : q.OrderByDescending(x => x.DateOfBirth);
+            }
+            else if (by == "studyyear")
+            {
+                // Studyyear (how many year student is studying) is derived from EnrolmentDate
+                q = desc
+                    ? q.OrderBy(x => x.EnrollmentDate)
+                    : q.OrderByDescending(x => x.EnrollmentDate);
+            }            
+            else
+            {
+                // fallback (default case)
+                q = q.OrderBy(x => x.LastName).ThenBy(x => x.FirstName);
+            }
+
+
+
+
+            var totalCount = await q.CountAsync(ct);
+
+            var students = await q                
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(ct);
+
+            //return students.Select(x => new StudentReadDto
+            //{
+            //    Id = x.Id,
+            //    FirstName = x.FirstName,
+            //    LastName = x.LastName,
+            //    Email = x.Email,
+            //    DateOfBirth = x.DateOfBirth,
+            //    CreatedAt = x.CreatedAt,
+            //    EnrollmentDate = x.EnrollmentDate,
+            //    Notes = x.Notes,
+            //    YearOfStudy = x.CalculateYearOfStudy(),
+            //    Age = x.CalculateAge()
+            //}).ToList();
+
+            return new PagedResultDto<StudentReadDto>
+            {
+                TotalCount = totalCount,
+                Items = students.Select(x => new StudentReadDto
+                {
+                    Id = x.Id,
+                    FirstName = x.FirstName,
+                    LastName = x.LastName,
+                    Email = x.Email,
+                    DateOfBirth = x.DateOfBirth,
+                    CreatedAt = x.CreatedAt,
+                    EnrollmentDate = x.EnrollmentDate,
+                    Notes = x.Notes,
+                    YearOfStudy = x.CalculateYearOfStudy(),
+                    Age = x.CalculateAge()
+                }).ToList()
+            };
         }
 
 
@@ -196,7 +280,7 @@ namespace StudentsApi.Services
                 ? null 
                 : dto.Notes.Trim();
 
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync(ct);
 
             return (true, null);
         }

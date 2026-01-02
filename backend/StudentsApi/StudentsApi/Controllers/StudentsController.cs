@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StudentsApi.Dtos;
-using StudentsApi.Services;
+using StudentsApi.Services.Students;
 
 namespace StudentsApi.Controllers
 {
@@ -19,11 +19,15 @@ namespace StudentsApi.Controllers
 
         // GET: /api/students?search=john
         [HttpGet]
-        public async Task<ActionResult<List<StudentReadDto>>> GetAll(
-            [FromQuery] string? search, 
+        public async Task<ActionResult<PagedResultDto<StudentReadDto>>> GetAll(
+            [FromQuery] string? search = null, 
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? sortBy = null,
+            [FromQuery] string? sortDirection = null,
             CancellationToken ct = default)
         {
-            var students = await _studentService.GetAllAsync(search, ct);
+            var students = await _studentService.GetAllAsync(search, page, pageSize, sortBy, sortDirection, ct);
             return Ok(students);
         }
 

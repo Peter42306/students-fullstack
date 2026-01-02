@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { createStudent } from "../../api/studentsApi";
+import { createStudent, uploadEnclosures } from "../../api/studentsApi";
 import StudentForm from "../../components/students/StudentForm";
 
 const empty = {firstName:'', lastName:'', email:'', dateOfBirth:'', enrollmentDate:'', notes:'',};
@@ -9,9 +9,11 @@ export default function StudentCreate() {
 
     const navigate = useNavigate();    
 
-    const [form, setForm] = useState({empty});
+    const [form, setForm] = useState(empty);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');    
+    const [filesToUpload, setFilesToUpload] = useState([]);
+
 
     async function onSubmit(e) {
         e.preventDefault();
@@ -20,7 +22,18 @@ export default function StudentCreate() {
         setError('');
 
         try {
-            await createStudent(form);
+            const created =  await createStudent(form);
+            const studentId = created?.id;
+
+            if(!studentId){
+                throw new Error("Create succeeded, but server did not return id.");
+            }
+
+            if(filesToUpload.length > 0){
+                await uploadEnclosures(studentId, filesToUpload);
+            }
+
+
             navigate('/students');
         } catch (err) {
             setError(err?.message ?? 'Create failed');
@@ -53,6 +66,24 @@ export default function StudentCreate() {
                 error={error}
                 submitText="Save"
             />
+
+            <div>
+                <hr/>
+                <label>Enclosures (optional)</label>
+                <input
+                    type="file"
+                    className="form-control"
+                    multiple
+                    onChange={(e) => setFilesToUpload(Array.from(e.target.files ?? []))}
+                    disabled={saving}
+                />
+                {filesToUpload.length > 0 && (
+                    <div>
+                        Selected: {filesToUpload.length} files
+                    </div>
+                )}
+            </div>
+
         </div>
     );
 }

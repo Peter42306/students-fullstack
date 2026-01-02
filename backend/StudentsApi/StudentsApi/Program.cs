@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using StudentsApi.Data;
-using StudentsApi.Services;
+using StudentsApi.Services.Photos;
+using StudentsApi.Services.Storage;
+using StudentsApi.Services.Students;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +11,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 
+builder.Services.Configure<FileStorageOptions>(
+    builder.Configuration.GetSection("FileStorage"));
+
 builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<IStudentPhotoService, StudentPhotoService>();
+builder.Services.AddScoped<IFileStorage, LocalFileStorage>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
