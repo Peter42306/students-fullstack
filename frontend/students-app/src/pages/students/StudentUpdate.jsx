@@ -27,8 +27,7 @@ export default function StudentUpdate() {
                 const [student, enc] = await Promise.all([
                     getStudent(id),
                     getEnclosures(id),
-                ]);
-                //const student = await getStudent(id);
+                ]);                
 
                 setForm({
                     firstName: student.firstName ?? '',

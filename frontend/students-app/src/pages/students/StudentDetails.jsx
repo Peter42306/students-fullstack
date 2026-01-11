@@ -47,10 +47,7 @@ export default function StudentDetails() {
     if(loading){
         return (
             <div className="container py-3">
-                Loading...
-                {/* <div className="alert alert-info">
-                    Loading...
-                </div> */}
+                Loading...                
             </div>
         ) 
     } 

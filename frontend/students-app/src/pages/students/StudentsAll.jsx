@@ -14,21 +14,25 @@ export default function StudentsAll() {
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+
     const [search, setSearch] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
+
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [totalCount, setTotalCount] = useState(0);
+
     const [sortBy, setSortBy] = useState('id');
     const [sortDirection, setSortDirection] = useState('desc');
 
     const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
 
-    async function load() {
+    async function load(searchValue = debouncedSearch, pageValue = page) {
         setLoading(true);
         setError('');
 
         try {
-            const data = await getStudents(search, page, pageSize, sortBy, sortDirection);
+            const data = await getStudents(searchValue, pageValue, pageSize, sortBy, sortDirection);
             setStudents(data.items);
             setTotalCount(data.totalCount);
         } catch (err) {
@@ -39,8 +43,21 @@ export default function StudentsAll() {
     }
 
     useEffect(() => {
+        const id = setTimeout(() => {
+            setDebouncedSearch(search);
+        }, 1000);
+
+        return () => clearTimeout(id);
+    }, [search]);
+
+    useEffect(() => {
+        setPage(1);
+    },[debouncedSearch]);
+
+    useEffect(() => {
         load();
-    },[page, pageSize, sortBy, sortDirection]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[debouncedSearch, page, pageSize, sortBy, sortDirection]);
     
 
     async function onDelete(id) {
@@ -56,9 +73,11 @@ export default function StudentsAll() {
         }
     }
 
-    function handleSearch() {
+    function handleSearchNow() {
+        const trimmed = search.trim();
+        setDebouncedSearch(trimmed);
         setPage(1);                
-        load();
+        load(trimmed, 1);
     }
 
     function onSort(col){
@@ -94,7 +113,7 @@ export default function StudentsAll() {
                 <StudentSearchBar 
                     search={search} 
                     onSearchChange={setSearch} 
-                    onSearch={handleSearch}
+                    onSearch={handleSearchNow}
                 />
                 {/* {loading && <StudentsLoading/>} */}
                 {error && <StudentsError error={error}/>}
@@ -129,8 +148,6 @@ export default function StudentsAll() {
                         <option value={30}>30</option>
                     </select>
                     
-
-
                     <PaginationBarRange
                         page={page}
                         pageSize={pageSize}
