@@ -112,4 +112,3 @@ export async function deleteEnclosure(studentId, enclosureId) {
 export function enclosureDownloadUrl(studentId, enclosureId) {
     return `${API_BASE}/${studentId}/enclosures/${enclosureId}`;
 }
-
