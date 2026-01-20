@@ -2,7 +2,8 @@
 
 A full-stack CRUD template for students with related photos.
 
-This project demonstrates a typical ASP.NET Core Web API + React architecture. 
+This project was built with focus on building and deploying a full-stack application,
+including a Dockerized backend and database, API design, persistent file storage on the host file system, and an ASP.NET Core Web API + React + PostgreSQL stack.
 
 Features:
 - Create, update, view, and delete entities
