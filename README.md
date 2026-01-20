@@ -5,14 +5,23 @@ A full-stack CRUD template for students with related photos.
 This project demonstrates a typical ASP.NET Core Web API + React architecture. 
 
 Features:
+- Create, update, view, and delete entities
 - File uploads
 - Keeping uploaded files on the server filesystem
+- Server-side validation
 - Pagination
 - Sorting
-- Create, update, view, and delete entities
+- Search with debounced API requests (after user stops typing)
+- Responsive UI (mobile-friendly layout)
 - Running backend and database using Docker containers
 
 ## Screenshots
+
+![Screenshot 2026-01-20 105605](https://github.com/user-attachments/assets/d12b948c-4cce-45f1-9673-b762c13c96d3)
+
+![Screenshot 2026-01-20 110908](https://github.com/user-attachments/assets/a615ee31-757e-40a8-bf78-dcd8fb85f5a7)
+
+![Screenshot 2026-01-20 110945](https://github.com/user-attachments/assets/071fe5c1-1725-44c6-ac6f-6f49bc8db2e7)
 
 ## Technology stack
 
