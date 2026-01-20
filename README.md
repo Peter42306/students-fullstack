@@ -6,12 +6,12 @@ This project demonstrates a typical ASP.NET Core Web API + React architecture.
 
 Features:
 - Create, update, view, and delete entities
+- Server-side validation
 - File uploads
 - Keeping uploaded files on the server filesystem
-- Server-side validation
 - Pagination
 - Sorting
-- Search with debounced API requests (after user stops typing)
+- Search with debounced API requests (after the user stops typing)
 - Responsive UI (mobile-friendly layout)
 - Running backend and database using Docker containers
 
